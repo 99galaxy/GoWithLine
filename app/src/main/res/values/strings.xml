@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">GoWithLine</string>
+
+    <string name="help_button">帮助</string>
+    <string name="locate_button">定位到当前位置</string>
+    <string name="follow_button">跟随模拟位置</string>
+    <string name="toast_floating_on">悬浮速度窗已开启</string>
+    <string name="toast_floating_off">悬浮速度窗已关闭</string>
+    <string name="dialog_overlay_title">需要悬浮窗权限</string>
+    <string name="dialog_overlay_message">用于在其他应用上方显示当前模拟速度，并快速切换速度。请在系统设置中允许“显示在其他应用上层”。</string>
+    <string name="dialog_overlay_settings">去授权</string>
+    <string name="speed_hint">速度</string>
+    <string name="speed_unit">km/h</string>
+    <string name="default_speed">5.0</string>
+    <string name="loop">循环</string>
+    <string name="preset_walk">步行 5</string>
+    <string name="preset_run">跑步 10</string>
+    <string name="preset_bike">骑行 20</string>
+    <string name="preset_drive">驾车 40</string>
+
+    <string name="route_empty">请在地图上按住并拖动，画出要模拟的路线</string>
+    <string name="route_info">总里程 %1$s · 按当前速度约需 %2$s</string>
+
+    <string name="btn_draw">绘制路线</string>
+    <string name="btn_finish_draw">结束绘制</string>
+    <string name="btn_undo">撤销</string>
+    <string name="btn_clear">清空</string>
+    <string name="btn_start">开始模拟</string>
+    <string name="btn_starting">启动中…</string>
+    <string name="btn_restart">重新开始</string>
+    <string name="btn_pause">暂停</string>
+    <string name="btn_resume">继续</string>
+    <string name="btn_stop">停止</string>
+
+    <string name="status_running_detail">模拟中 · 已行进 %1$s / %2$s · 剩余 %3$s</string>
+    <string name="status_paused_detail">已暂停 · 已行进 %1$s / %2$s</string>
+    <string name="status_finished_detail">已完成 · 总里程 %1$s</string>
+
+    <string name="toast_draw_hint">单指按住拖动绘制路线；双指可缩放/拖动地图</string>
+    <string name="toast_need_route">请先绘制至少两个点的路线</string>
+    <string name="toast_route_too_short">路线太短，请重新绘制</string>
+    <string name="toast_speed_invalid">请输入 0.1–300 之间的速度</string>
+    <string name="toast_need_location">需要定位权限才能开始模拟</string>
+    <string name="toast_layer_locked">模拟进行中，无法切换图层</string>
+    <string name="toast_stopped">已停止模拟，真实定位已恢复</string>
+    <string name="toast_joystick_close_stops">摇杆已关闭，模拟已停止</string>
+    <string name="toast_location_unavailable">暂时无法获取当前位置</string>
+    <string name="toast_notifications_denied">通知权限未授予，前台通知可能不可见</string>
+    <string name="toast_follow_on">已开启地图跟随</string>
+    <string name="toast_follow_off">已关闭地图跟随</string>
+    <string name="toast_copied">诊断信息已复制</string>
+    <string name="toast_wifi_hint">Wi-Fi 开启可能导致定位闪回；若模拟无效，请关闭 Wi-Fi 后重试</string>
+    <string name="mock_status_checking">正在检查模拟位置权限…</string>
+    <string name="mock_status_ready">模拟位置权限已就绪（点击自检）</string>
+    <string name="mock_status_no_dev">未开启开发者选项（点击设置）</string>
+    <string name="mock_status_no_permission">需要精确位置权限（点击授权）</string>
+    <string name="mock_status_no_location">系统定位未开启（点击设置）</string>
+    <string name="mock_status_not_selected">未选中“GoWithLine”为模拟位置应用（点击设置）</string>
+    <string name="mock_status_running">%1$s · 注入 %2$d · 回读 %3$d（点击自检）</string>
+    <string name="mock_status_providers">GPS%1$s NETWORK%2$s FUSED%3$s</string>
+
+    <string name="dialog_mock_title">需要模拟位置权限</string>
+    <string name="dialog_mock_message">请先在开发者选项中选择本应用：\n\n设置 → 开发者选项 → 选择模拟位置信息应用 → GoWithLine\n\n如果还没有开发者选项：设置 → 关于手机 → 连续点击“版本号”7 次。</string>
+    <string name="dialog_developer_title">请先开启开发者选项</string>
+    <string name="dialog_developer_message">请先开启开发者选项：\n\n设置 → 关于手机 → 连续点击“版本号”7 次，返回设置即可看到“开发者选项”。\n\n然后进入“开发者选项 → 选择模拟位置信息应用”，选择“GoWithLine”。</string>
+    <string name="dialog_open_settings">打开设置</string>
+    <string name="dialog_open_app_settings">打开应用设置</string>
+    <string name="dialog_cancel">取消</string>
+    <string name="dialog_permission_title">需要精确位置权限</string>
+    <string name="dialog_permission_message">模拟位置和前台定位服务需要“精确位置”权限。请在应用设置中把定位权限改为“始终允许”或“仅在使用时允许（精确）”，然后重试。</string>
+
+    <string name="dialog_disclaimer_title">使用声明</string>
+    <string name="dialog_disclaimer_message">本应用通过 Android 调试 API 模拟位置，仅用于开发测试、教学演示与定位功能调试。\n\n请勿用于游戏作弊、考勤/校园跑或其他违规用途。部分应用可以检测模拟位置，不同厂商系统也可能存在限制。\n\n继续使用即表示你了解并自行承担相关责任。</string>
+    <string name="dialog_agree">同意并继续</string>
+    <string name="dialog_disclaimer_check">我理解并同意：不将本应用用于考勤打卡、校园跑/体测或游戏定位。</string>
+    <string name="dialog_exit">退出</string>
+
+    <string name="dialog_clear_title">清空路线</string>
+    <string name="dialog_clear_message">确定要清空当前绘制的路线吗？</string>
+    <string name="dialog_clear_ok">清空</string>
+
+    <string name="dialog_help_title">使用帮助</string>
+    <string name="dialog_help_message">1. 首次使用请在“开发者选项 → 选择模拟位置信息应用”中选择“GoWithLine”。\n\n2. 点击“绘制路线”，单指按住拖动即可画线；绘制过程中可以用双指缩放或拖动地图，松开双指后继续单指画线。可多次绘制，多段路线会自动连接。\n\n3. 输入速度（km/h），点击“开始模拟”。\n\n4. 模拟期间可暂停、继续或停止；通知栏也可以控制。停止后系统会恢复真实定位。\n\n提示：\n• 部分机型在 Wi-Fi 开启时可能出现定位闪回，可尝试关闭 Wi-Fi 扫描。\n• 内置 OpenStreetMap 使用 WGS-84；自定义 GCJ-02 图层会自动换算已绘制的路线。\n• 自定义 XYZ 图层必须包含 {z}、{x}、{y} 占位符。\n• 开启“循环”后到达终点会回到起点，建议把路线画成闭环。\n• 设置里可切换路线/摇杆模式；摇杆模式的悬浮窗只有半透明摇杆和 +/− 速度按钮，速度显示在摇杆头上。\n• 摇杆模式：拖动控制方向，松开停止；点摇杆头锁定/解锁，锁定后松手仍按设定速度移动。\n• 部分应用可以识别模拟位置，这是 Android 调试 API 的固有限制。</string>
+    <string name="dialog_ok">知道了</string>
+
+    <string name="dialog_layer_title">选择地图图层</string>
+    <string name="dialog_layer_note">内置仅提供 OpenStreetMap（HOT 瓦片镜像，WGS-84），需要网络并会向该服务暴露 IP 与瓦片坐标。如需其他底图，请选择自定义 XYZ，填写你有权使用的瓦片服务。</string>
+    <string name="layer_osm">OpenStreetMap（WGS-84）</string>
+    <string name="layer_custom">自定义 XYZ…</string>
+    <string name="attribution_osm">© OpenStreetMap contributors · HOT</string>
+
+    <string name="dialog_custom_title">自定义 XYZ 图层</string>
+    <string name="custom_url_hint">瓦片 URL 模板</string>
+    <string name="custom_url_help">必须包含 {z}、{x}、{y}，例如 https://…/{z}/{x}/{y}.png</string>
+    <string name="custom_coord_wgs">WGS-84（OpenStreetMap 等）</string>
+    <string name="custom_coord_gcj">GCJ-02（国内偏移坐标系）</string>
+    <string name="custom_coord_note">坐标系选错会导致路线与地图出现偏移。</string>
+    <string name="custom_url_invalid">URL 必须包含 {z}、{x}、{y} 占位符</string>
+    <string name="dialog_confirm">确定</string>
+
+    <string name="error_dialog_title">无法启动模拟</string>
+    <string name="error_foreground_start">前台定位服务启动失败，请检查定位权限</string>
+    <string name="error_invalid_route">路线数据无效，请重新绘制</string>
+    <string name="error_route_too_short">路线太短，请重新绘制</string>
+    <string name="error_mock_permission">无法创建模拟位置，请确认已在开发者选项中选择本应用</string>
+
+    <string name="notification_channel_name">位置模拟</string>
+    <string name="notification_channel_description">GoWithLine 运行状态与快捷控制</string>
+    <string name="notification_starting">正在启动位置模拟…</string>
+    <string name="notification_running">模拟中 · %1$.1f km/h · %2$s / %3$s</string>
+    <string name="notification_paused">已暂停 · %1$s / %2$s</string>
+    <string name="notification_finished">已完成 · 总里程 %1$s</string>
+    <string name="notification_joystick_running">摇杆模式 · %1$.1f km/h · 已移动 %2$s</string>
+    <string name="notification_joystick_paused">摇杆模式已暂停 · 已移动 %1$s</string>
+    <string name="notification_error_title">GoWithLine 启动失败</string>
+    <string name="notification_pause">暂停</string>
+    <string name="notification_resume">继续</string>
+    <string name="notification_stop">停止</string>
+
+    <!-- Settings / v1.1 -->
+    <string name="settings_title">设置</string>
+    <string name="settings_section_simulation">模拟</string>
+    <string name="settings_section_map">地图</string>
+    <string name="settings_section_tools">工具</string>
+    <string name="settings_section_about">关于</string>
+    <string name="settings_mode_title">模拟模式</string>
+    <string name="settings_mode_route">路线模式</string>
+    <string name="settings_mode_joystick">摇杆模式</string>
+    <string name="settings_mode_route_summary">绘制路线，按设定速度沿路线移动</string>
+    <string name="settings_mode_joystick_summary">使用悬浮窗摇杆控制方向，按设定速度移动</string>
+    <string name="settings_mode_locked">模拟进行中，停止后可切换模式</string>
+    <string name="settings_mode_switched_route">已切换到路线模式</string>
+    <string name="settings_mode_switched_joystick">已切换到摇杆模式</string>
+    <string name="settings_floating_title">悬浮速度窗</string>
+    <string name="settings_floating_summary">在其他应用上方显示速度，并可快速切换</string>
+    <string name="settings_floating_joystick_summary">摇杆模式：半透明摇杆显示在悬浮窗中</string>
+    <string name="settings_floating_on">悬浮速度窗已开启</string>
+    <string name="settings_floating_off">悬浮速度窗已关闭</string>
+    <string name="settings_overlay_denied">未授予悬浮窗权限</string>
+    <string name="settings_layer_title">地图图层</string>
+    <string name="settings_layer_summary">当前：%1$s</string>
+    <string name="settings_layer_applied">已选择 %1$s，返回地图后生效</string>
+    <string name="settings_self_check_title">自检</string>
+    <string name="settings_self_check_summary">检查模拟位置权限、provider 和系统回读</string>
+    <string name="settings_about_version">当前版本</string>
+    <string name="settings_about_developer">开发者 GitHub</string>
+    <string name="settings_about_project">项目开源地址</string>
+    <string name="settings_about_check_update">检查更新</string>
+    <string name="settings_about_checking">检查中…</string>
+    <string name="settings_about_update_available">发现新版本</string>
+    <string name="settings_about_update_failed">检查更新失败</string>
+    <string name="settings_about_up_to_date_fmt">已是最新版本 %1$s</string>
+    <string name="settings_about_available_fmt">发现新版本 %1$s（当前 %2$s）</string>
+    <string name="settings_about_open_release">打开发布页</string>
+    <string name="settings_about_check_failed_msg">无法连接 GitHub，请检查网络，或打开 Releases 页面查看。</string>
+    <string name="settings_developer_url">https://github.com/99galaxy</string>
+    <string name="settings_project_url">https://github.com/99galaxy/GoWithLine</string>
+    <string name="settings_open_link_failed">无法打开链接</string>
+    <string name="settings_self_check_not_bound">模拟服务未连接，请稍后重试</string>
+
+    <!-- Joystick / v1.1 -->
+    <string name="route_joystick_hint">摇杆模式：开始后在悬浮窗中拖动摇杆，固定速度移动；点摇杆头锁定/解锁</string>
+    <string name="status_joystick_running">摇杆模式 · 已移动 %1$s</string>
+    <string name="status_joystick_paused">摇杆模式 · 已暂停 · 已移动 %1$s</string>
+    <string name="status_joystick_finished">摇杆模式 · 已停止 · 已移动 %1$s</string>
+</resources>

@@ -1,0 +1,87 @@
+name: Bug 报告
+description: 模拟没生效、闪退、界面异常等
+title: "[Bug] "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        定位类问题九成和机型/ROM 有关。请先跑一次「设置 → 自检 → 复制」，没有自检文本很难定位。
+
+  - type: input
+    id: version
+    attributes:
+      label: GoWithLine 版本
+      placeholder: 1.0
+    validations:
+      required: true
+
+  - type: input
+    id: device
+    attributes:
+      label: 手机型号与 ROM
+      placeholder: Redmi K70 Ultra / HyperOS 2.x
+    validations:
+      required: true
+
+  - type: input
+    id: android
+    attributes:
+      label: Android 版本
+      placeholder: Android 15
+    validations:
+      required: true
+
+  - type: dropdown
+    id: mock_selected
+    attributes:
+      label: 开发者选项里是否已选中「GoWithLine」
+      options:
+        - 已选中
+        - 未选中
+        - 列表里没有这个应用
+    validations:
+      required: true
+
+  - type: dropdown
+    id: wifi
+    attributes:
+      label: 是否开启 Wi-Fi
+      options:
+        - 已关闭
+        - 已开启
+        - 不确定
+    validations:
+      required: true
+
+  - type: textarea
+    id: selfcheck
+    attributes:
+      label: 自检文本
+      description: 设置 → 自检 → 复制，粘贴到这里。这一项最关键。
+      render: text
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: 复现步骤
+      placeholder: |
+        1. ...
+        2. ...
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: 期望结果与实际结果
+    validations:
+      required: true
+
+  - type: input
+    id: target_app
+    attributes:
+      label: 如果是某个特定 App 不生效，请写 App 名称
+      placeholder: 留空表示所有 App 都不动

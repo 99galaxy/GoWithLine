@@ -1,0 +1,29 @@
+name: 功能建议
+description: 使用场景、现在的绕法、是否愿意提 PR
+title: "[Feature] "
+labels: ["enhancement"]
+body:
+  - type: textarea
+    id: scenario
+    attributes:
+      label: 使用场景
+      description: 你想解决什么问题？请描述开发/测试场景，而不是绕过某个 App 的检测。
+    validations:
+      required: true
+
+  - type: textarea
+    id: workaround
+    attributes:
+      label: 现在怎么绕
+      placeholder: 例如手动拖摇杆、用 ADB 脚本、换别的工具
+
+  - type: dropdown
+    id: pr
+    attributes:
+      label: 是否愿意提 PR
+      options:
+        - 愿意
+        - 可以试试
+        - 不，只提建议
+    validations:
+      required: true

@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: 使用说明与常见问题
+    url: https://github.com/99galaxy/GoWithLine#常见问题
+    about: 先看 README 的自检与常见问题，能解决大部分「模拟不生效」
+  - name: 下载最新版本
+    url: https://github.com/99galaxy/GoWithLine/releases/latest
+    about: APK 只在 Releases 页发布
