@@ -1,6 +1,6 @@
 # GoWithLine
 
-Route simulation for Android — draw a route, set a speed, and let the mock location follow it. No root, no account, no ads, open source. [中文](README.md)
+Route simulation for Android — draw a route, set a speed, and let your mock location glide along it smoothly. A lightweight, root-free, account-free, and ad-free open-source location testing tool. [中文](README.md)
 
 [![release](https://img.shields.io/badge/release-1.0-blue)](https://github.com/99galaxy/GoWithLine/releases/latest)
 [![license](https://img.shields.io/badge/license-GPL--3.0-blue)](LICENSE)
@@ -8,131 +8,137 @@ Route simulation for Android — draw a route, set a speed, and let the mock loc
 
 ![GoWithLine demo](docs/screenshots/demo.gif)
 
-**[Download the latest APK](https://github.com/99galaxy/GoWithLine/releases/latest)** · ~5 MB · Android 8.0+ · SHA-256 on the release page
+**[Download Latest APK](https://github.com/99galaxy/GoWithLine/releases/latest)** · ~5 MB · Android 8.0+ · SHA-256 available on the Release page
 
-| Good for | Not for |
+| Intended Use Cases | Prohibited / Out-of-Scope Uses |
 |---|---|
-| Development, teaching demos, and testing map/tracking/location-aware apps | Attendance fraud, campus running/PE tests, game location spoofing, or bypassing detection |
+| Development, debugging, educational demos, and testing map/tracking/location-aware apps | Attendance fraud, campus running/PE test spoofing, game cheating, or bypassing detection |
 
-The app injects locations through Android's debugging API. Some apps detect mock locations (`isFromMockProvider`, FusedLocation, vendor SDKs); there is no way around that without root, and bypassing detection is not a goal of this project.
+This application injects mock locations via Android developer debugging APIs. Certain applications can detect mock locations (e.g., via `isFromMockProvider`, FusedLocationProvider, or vendor-specific security SDKs); bypassing such detection without root privileges is technically impossible and is strictly out of scope for this project.
 
 <img src="docs/screenshots/main.png" width="240" alt="Freehand route"> <img src="docs/screenshots/joystick.png" width="240" alt="Joystick mode"> <img src="docs/screenshots/selfcheck.png" width="240" alt="Self-check">
 
 ## Features
 
-- **Freehand routes:** press and drag with one finger; multiple segments connect automatically; undo and clear are supported. **Two-finger zoom/pan still works while drawing**; release and continue with one finger.
-- **Constant speed:** enter km/h directly; built-in walk/run/bike/drive presets; change speed while running.
-- **Smooth movement:** distance advances by real time, with interpolated latitude/longitude and bearing along the polyline; injects into GPS, NETWORK and FUSED test providers at once (the working combination varies by device).
-- **Pause / resume / stop:** the last position keeps being published while paused or finished to avoid location snap-back; stopping removes the test providers and restores the real location.
-- **Loop, map follow, foreground notification (pause/resume/stop), WakeLock.**
-- **Floating speed window:** shows the current mock speed over other apps; draggable, `−/+` fine-tuning, 5/10/20/40 km/h presets, and a close button to hide it.
-- **Joystick mode:** a joystick appears in the floating window; it controls direction only, at the configured speed. Drag to move, release to stop. Useful when drawing a route in advance is inconvenient.
-- **Joystick lock:** tap the joystick head to toggle lock/unlock; when locked, releasing your finger keeps moving at the set speed, and tapping the head again stops it.
-- **The joystick window has no panel:** just a semi-transparent joystick and `−/+` speed buttons; speed, unit and lock state are drawn on the joystick head.
-- **Settings page:** simulation mode, floating window, map layer, self-check and about in one place.
-- **About:** current version, developer GitHub, project URL, and update check (GitHub Releases).
-- **Automatic state saving:** route, speed, loop, layer, simulation mode and map center.
-- **Map layers:**
-  - OpenStreetMap (WGS-84, built in; HOT tile mirror served by OpenStreetMap France)
-  - Custom XYZ tile template (WGS-84 / GCJ-02; use a service you are authorized to use)
+- **Freehand Route Drawing**: Draw multi-segment routes with a single finger touch-and-drag; segments connect automatically with full support for undo and clear. **Two-finger pan and zoom gestures remain active while drawing**—simply release your fingers to seamlessly resume drawing with one finger.
+- **Constant Speed Control**: Set speeds in km/h with convenient presets for walking, running, cycling, and driving. Speed can be adjusted on the fly while simulation is running.
+- **Smooth Trajectory Movement**: Distance advances according to real physical time, smoothly interpolating coordinates and bearings along the polyline. Injects into GPS, NETWORK, and FUSED test providers simultaneously (effective combinations depend on device hardware and ROM).
+- **Comprehensive Lifecycle Control**: Seamlessly pause, resume, and stop. During pause or upon reaching the destination, the final location continues to be broadcast to prevent snap-back to the real location. Stopping cleanly unregisters test providers and restores real GPS.
+- **Essential Utilities**: Route looping, camera auto-follow, foreground notification with playback controls (pause/resume/stop), and WakeLock to prevent the screen from sleeping.
+- **Floating Speed Overlay**: Displays the current mock speed over other applications. Features drag-to-reposition, `−/+` fine-tuning, quick preset chips (5/10/20/40 km/h), and an instant close button.
+- **Virtual Joystick Mode**: No pre-planned route required. Switch to joystick mode to display a virtual joystick in the floating overlay. The joystick controls heading direction while moving at the set speed—drag to move, release to stop. Ideal for spontaneous exploration or scenarios where drawing a route in advance is impractical.
+- **Direction Lock (Cruise Control)**: Tap the center knob (joystick head) to toggle between locked and unlocked heading. When locked, releasing your finger keeps cruising in the current direction; tap the knob again to stop.
+- **Minimalist Joystick Overlay**: In joystick mode, the floating window dispenses with bulky panels, keeping only a semi-transparent joystick and `−/+` speed buttons. Speed, unit, and lock status are rendered directly inside the joystick knob.
+- **Centralized Settings**: Manage simulation modes, floating window toggles, map tile layers, environment diagnostics, and about info in one place.
+- **About & Updates**: Inspect the current version, visit the developer's GitHub profile, access the source repository, and check for new releases via GitHub Releases.
+- **State Persistence**: Automatically persists routes, speed settings, loop toggle, layer selection, simulation mode, and map center across app restarts.
+- **Custom Map Tile Layers**:
+  - **OpenStreetMap** (WGS-84, built-in): Powered by the HOT tile mirror hosted by OpenStreetMap France.
+  - **Custom XYZ Tile Templates** (Supports WGS-84 / GCJ-02): Allows connecting to any third-party tile service you are authorized to use.
+  - Go to "Settings → Map layer", choose "Custom XYZ…", enter a tile URL template containing `{z}`, `{x}`, and `{y}` placeholders (e.g. `https://tiles.example.com/{z}/{x}/{y}.png`), and specify the corresponding coordinate system.
 
-> Only OpenStreetMap is built in (HOT tile mirror; data © OpenStreetMap contributors, ODbL). For other basemaps, use a custom XYZ source you are authorized to use. Built-in tiles may fail due to network or service policy.
+> Only OpenStreetMap is built-in (HOT tile style, map data © OpenStreetMap contributors, licensed under ODbL). For other base maps, please configure a custom XYZ tile source you have permission to access. Built-in tiles may experience intermittent connectivity issues due to network environments or upstream service policies; custom tile services must also be accessible from your device's network.
 
 ## Usage
 
-1. Install the APK, open the app, tick and accept the usage statement (not for attendance, campus running/PE tests, or game location), and grant location and notification permissions.
-2. Enable Developer options:
-   - Settings → About phone → tap “Build number” 7 times;
-   - Settings → Developer options → **Select mock location app** → choose “GoWithLine”.
-3. Route mode: tap “Draw route” and press-drag with one finger. You can pinch to zoom or pan while drawing; release and continue with one finger. Draw multiple segments, then tap “Finish drawing” to leave drawing mode.
-4. Enter a speed (km/h), optionally enable loop, and tap “Start”.
-5. During simulation you can pause, resume or stop; the notification also controls it. Stopping restores the real location.
-6. Joystick mode: gear icon → Settings → Simulation mode → **Joystick mode** (requires overlay permission). Back on the main screen, tap “Start”; the floating window shows a semi-transparent joystick and `−/+` speed buttons. Drag to steer at the configured speed, release to stop. No route is needed.
-   - The joystick head shows the current speed (km/h) and a faint “lock” hint; tap the head to toggle lock/unlock.
-   - When locked, releasing keeps moving in the current direction and the joystick stays deflected; tap the head again to stop.
-   - While locked, drag the joystick to change direction: it follows your finger smoothly from its current position instead of jumping to the touch point; release and it settles on the new direction and keeps moving.
-   - `−/+` adjusts by 1 km/h; the small bar at the top of the floating window drags the whole control.
-7. Floating speed window: Settings → Floating speed window (the first time opens the system “Display over other apps” page). In route mode it shows the speed and presets while running; in joystick mode it is forced on and shows the joystick.
-   - Reinstalling may reset the overlay permission; the toggle will prompt you to grant it again.
-8. Map layer: Settings → Map layer → OpenStreetMap / Custom XYZ; returning to the map applies it and converts the existing route.
-9. Self-check: Settings → Self-check: developer options, mock location app, location service, provider injection and system read-back.
-10. About: Settings → About: current version (1.0), developer GitHub, project URL and update check.
-    - The update check calls GitHub Releases; network differences may make it fail, and the release page is offered on failure.
+1. **Installation & Permissions**: Install the APK and launch the app. Read and accept the usage agreement (confirming not to use it for attendance check-ins, campus fitness tests, or game spoofing), then grant basic location and notification permissions.
+2. **Enable Developer Options & Mock Location**:
+   - Go to system "Settings → About phone", tap "Build number" 7 times to activate Developer Options;
+   - Navigate to system "Settings → Developer options → **Select mock location app**", and choose "GoWithLine".
+3. **Route Mode**: Tap "Draw route" on the main screen, then press and drag with one finger to outline your route. You can pinch to zoom or pan the map with two fingers at any time; lift both fingers to continue drawing with one finger. Multi-segment drawing is supported; tap "Finish drawing" when done.
+4. **Start Simulation**: Enter your target speed (km/h), toggle "Loop" if desired, and tap "Start".
+5. **Simulation Controls**: Pause, resume, or stop the simulation at any time from the app or directly via the system notification shade. Stopping the simulation immediately restores your device's real location.
+6. **Joystick Mode**:
+   - Tap the gear icon in the toolbar → "Simulation mode" → select **Joystick mode** (requires the "Display over other apps" overlay permission on first use);
+   - Return to the main screen and tap "Start". A semi-transparent joystick and `−/+` speed buttons will appear on screen;
+   - Drag the joystick to steer at your configured speed; release to stop instantly—no route drawing needed;
+   - The joystick knob displays the current speed (km/h) and a lock icon; tap the knob to toggle direction lock;
+   - When locked, releasing your finger retains the deflection angle and continues moving forward; tap the knob again to stop;
+   - While locked, dragging the joystick smoothly adjusts your heading: it tracks your finger smoothly from its current position rather than snapping abruptly to the touch point; releasing fixes the new direction and resumes cruise;
+   - Use the drag handle at the top of the overlay to reposition the control on screen; `−/+` buttons adjust speed by 1 km/h per tap.
+7. **Floating Speed Overlay**: Go to "Settings → Floating speed window" (first use will redirect to the system overlay permission page). In route mode, it shows real-time speed and preset chips during simulation; in joystick mode, it is automatically enabled to host the virtual joystick.
+   - If the app is reinstalled, the operating system may revoke this permission; the switch will prompt you to re-grant it when needed.
+8. **Custom Map Tile Layers**: Go to "Settings → Map layer → Custom XYZ…" → Confirm → enter the tile URL template and select the coordinate system (WGS-84 or GCJ-02) → Confirm. Returning to the map applies the new layer and automatically reprojects any existing route coordinates. The template must include `{z}`, `{x}`, and `{y}` placeholders, such as `https://tiles.example.com/{z}/{x}/{y}.png`.
+9. **Environment Self-Check**: Open "Settings → Self-check" to run automated diagnostics on developer options, mock location app selection, system location toggles, provider injection status, and system read-back counts.
+10. **About & Update Checks**: Open "Settings → About" to view the installed version (1.0), developer GitHub profile, source code repository, and check for new updates.
+    - Update checks query the GitHub Releases API. If connectivity issues cause the check to fail, a direct link to the Releases page will be provided.
 
-If the app says permission is missing on first launch, follow the in-app dialog to open Developer settings.
+> If permission prompts appear on first launch, simply follow the in-app dialog instructions to navigate to system settings and grant the required permissions.
 
-## How it works
+## How It Works
 
-### 1. No-root mock location
+### 1. No-Root Mock Location Mechanism
 
-`MockLocationService` is a foreground service (`foregroundServiceType="location"`). On start it:
+`MockLocationService` runs as an Android Foreground Service (declaring `foregroundServiceType="location"`) to ensure process persistence and reliable injection:
 
-1. registers test providers with `LocationManager.addTestProvider(GPS / NETWORK / FUSED, ...)`;
-2. calls `setTestProviderLocation()` every 200 ms with the current mock position;
-3. fills `Location` with latitude/longitude, altitude, accuracy, bearing, speed, time and `elapsedRealtimeNanos`; GPS also gets `satellites` extras;
-4. on stop, calls `setTestProviderEnabled(false)` + `removeTestProvider()`.
+1. Upon startup, it registers GPS, NETWORK, and FUSED test providers via `LocationManager.addTestProvider(...)`;
+2. An internal timer triggers every 200 ms to write the latest mock position using `setTestProviderLocation()`;
+3. The generated `Location` object is populated with latitude, longitude, altitude, accuracy, bearing, speed, timestamp, and `elapsedRealtimeNanos`; GPS provider injections include additional satellite count extras;
+4. Upon stopping, it cleanly invokes `setTestProviderEnabled(false)` followed by `removeTestProvider()` to unregister providers completely.
 
-This is the same approach as GoGoGo's `ServiceGo`; API 31+ uses `ProviderProperties` power/accuracy constants, older versions use `Criteria`.
+This architecture adopts proven techniques from GoGoGo's `ServiceGo`. On Android 12+ (API 31+), power and accuracy constants are defined using `ProviderProperties`, while older versions gracefully fall back to `Criteria` constants.
 
-### 2. Coordinate systems
+### 2. Coordinate Systems & Transformations
 
-- Drawn points, the route, markers and the map center all use the current layer's coordinate system.
-- The built-in OpenStreetMap layer is WGS-84; a custom GCJ-02 layer needs conversion.
-- Conversion happens only at the system boundary: a GCJ-02 route is converted to WGS-84 when starting the simulation, and the WGS-84 mock position is converted back to GCJ-02 when displayed.
-- Switching between layers with different coordinate systems converts the existing route and map center to avoid an offset.
-- This is the same class of problem as GoGoGo converting Baidu BD-09 coordinates to WGS-84 before feeding them to the location API.
+- All hand-drawn points, polylines, map markers, and map center coordinates strictly adhere to the coordinate system of the currently active layer.
+- The built-in OpenStreetMap layer uses WGS-84; custom tile layers using China's GCJ-02 coordinate system require transformation.
+- Coordinate transformation strictly occurs at the system boundary: GCJ-02 coordinates are converted to WGS-84 when starting the simulation and sending data to the system location API; conversely, injected WGS-84 coordinates are transformed back to GCJ-02 when rendering the current mock position on the map.
+- Switching between map layers with different coordinate systems automatically reprojects existing routes and map center points, preventing visual displacement.
+- This design mirrors the approach in GoGoGo, which transforms Baidu BD-09 coordinates into WGS-84 before submitting them to the Android location provider.
 
-### 3. Route progression
+### 3. Route Progression Algorithms
 
-The geometry layer is plain Java and does not depend on Android:
+The core geometric computation layer is implemented in pure Java without Android SDK dependencies, ensuring decoupled architecture and comprehensive unit testability:
 
-- `GeoMath`: Haversine distance and bearing;
-- `RoutePath`: cumulative distance, interpolation by traveled distance, and bearing from a few metres ahead/behind;
-- `RouteSimulator`: `traveled += speed × Δt`, with pause, finish and loop modulo;
-- `RouteSimplifier`: Douglas-Peucker simplification of freehand points.
+- `GeoMath`: Implements Haversine great-circle distance calculations and initial bearing estimation;
+- `RoutePath`: Computes cumulative route distances, performs linear distance interpolation along polylines, and calculates heading angles via forward/backward differential sampling;
+- `RouteSimulator`: Core state machine advancing progress via `traveled += speed × Δt`, with complete support for pausing, completion detection, and modular loop wrap-around;
+- `RouteSimplifier`: Uses the Douglas-Peucker algorithm to decimate and smooth raw freehand touch points.
 
-The service uses `SystemClock.elapsedRealtime()` for the real Δt, so Handler delay does not accumulate into a speed error.
+The service uses `SystemClock.elapsedRealtime()` to determine high-precision wall-clock time intervals (Δt), eliminating speed drift caused by cumulative Handler dispatch latency.
 
-### 4. Joystick mode
+### 4. Joystick Mode Architecture
 
-- `simulation_mode` is stored in preferences and passed to the service Intent by the main screen.
-- Joystick mode does not build a route; the service starts at the map center (WGS-84) and advances by `speed × Δt` along the joystick direction using `GeoMath.destinationPoint()`.
-- The joystick reports only direction and active state; speed is fixed at the UI/floating-window km/h. Releasing or pausing stops movement.
-- The joystick is drawn inside the existing `TYPE_APPLICATION_OVERLAY` window, so it keeps working over other apps.
-- The lock state is maintained by the joystick view: tap the head to toggle; unlocking resets to center and stops; when locked, releasing keeps the deflection and continues reporting active, so the service keeps moving at the configured speed.
+- The `simulation_mode` preference is persisted in storage and passed to the background service via Intent extras on startup.
+- Joystick mode bypasses route generation: the service starts from the current map center (WGS-84) and calculates subsequent waypoints along the joystick heading using `GeoMath.destinationPoint()`, advancing by `speed × Δt` on each tick.
+- The virtual joystick outputs only the heading angle and active state; travel speed remains strictly locked to the configured km/h value from the UI/overlay. Releasing touch or pausing halts movement immediately.
+- The joystick control is rendered inside a system-level overlay window (`TYPE_APPLICATION_OVERLAY`), allowing full steering control when switching to background apps or other tasks.
+- Direction lock is maintained internally by the joystick view: tapping the center knob toggles lock status; when unlocked, releasing the knob snaps back to center and halts movement; when locked, releasing preserves the deflection angle and continues reporting active state, keeping the service cruising forward at constant speed.
 
 ## FAQ
 
-### GoWithLine is missing from the mock location app list
+### "GoWithLine" does not appear in the mock location app list
 
-The “Select mock location app” list only includes apps that declare `android.permission.ACCESS_MOCK_LOCATION`. This project declares it (it is not granted; it only makes the app appear in the list). Confirm you installed the latest build:
+The Android "Select mock location app" menu only lists applications that declare `android.permission.ACCESS_MOCK_LOCATION` in their `AndroidManifest.xml`. This app includes that permission declaration (it is never granted at runtime; it merely serves as a declaration to appear in the developer options list). If it does not show up:
 
-- Download the latest `GoWithLine-1.0.apk` from [Releases](https://github.com/99galaxy/GoWithLine/releases/latest);
-- Some ROMs cache the list; reopen Settings or reboot;
-- If it still does not appear, grant it via ADB:
-  `adb shell appops set com.gowithline.mock android:mock_location allow`
-  (install the app and grant location permission first).
+- Verify you installed the official build from the [Releases](https://github.com/99galaxy/GoWithLine/releases/latest) page;
+- Certain vendor ROMs cache the application list. Try closing and reopening Settings, or reboot your device;
+- If it still does not appear, grant mock location permissions directly via ADB:
+  ```bash
+  adb shell appops set com.gowithline.mock android:mock_location allow
+  ```
+  *(Ensure the app is already installed and basic location permissions have been granted).*
 
-### Simulation runs, but the map or another app does not move
+### The simulation has started, but location does not update on the map or in other apps
 
-Open “Help → Self-check” in the app and tap “Copy”. The report shows:
+Open "Settings → Self-check" from the top-right menu and tap "Copy" to export diagnostics. The self-check panel inspects:
 
-- developer options and whether the mock location app is selected;
-- the system location service, Wi-Fi and precise-location permission;
-- whether the GPS / NETWORK / FUSED test providers were added;
-- the injection count;
-- **system read-back:** the service registers a location listener; if the system really accepted our test position, this shows “success N times”. If read-back stays 0, the system did not apply the injection — the problem is permissions/ROM, not the UI.
+- **Developer Environment**: Whether Developer Options are enabled and GoWithLine is selected as the mock location app;
+- **System Service Status**: System location toggle, Wi-Fi status, and Precise Location permission status;
+- **Provider Status**: Whether GPS, NETWORK, and FUSED test providers were successfully registered;
+- **Injection Count**: Total number of location updates dispatched;
+- **System Read-back (Crucial Metric)**: The service registers a system location listener to verify whether injected locations are actually accepted by the Android framework. If accepted, this shows "Success N times". If read-back remains 0, the injection is being rejected or blocked at the OS/ROM level, indicating a permission or system policy issue rather than a UI problem.
 
-Common causes:
+**Common Causes & Solutions**:
 
-1. **“GoWithLine” is not selected in Developer options:** self-check shows “not selected”. Select it again.
-2. **System location is off:** self-check shows “off”. Turn location on and retry.
-3. **Approximate location only:** self-check shows “precise location not granted”. Change it to precise in app settings.
-4. **Wi-Fi is on:** some devices are overridden by Wi-Fi/fused location and snap back. Turn Wi-Fi off (or disable Wi-Fi scanning) and retry.
-5. **Provider add failed:** self-check includes the exception. Common on vendor ROMs that restrict `addTestProvider`.
-6. **Read-back succeeds but a specific app still does not move:** the app may use Google Play Services' FusedLocationProvider, its own location SDK, or actively check `isFromMockProvider()`. Such apps generally cannot be mocked without root.
+1. **GoWithLine is not selected in Developer Options**: Self-check reports "Not selected". Re-select it in system Developer Options.
+2. **System location is turned off**: Self-check reports "Disabled". Turn on location services in the system status bar or settings.
+3. **Only Approximate Location permission granted**: Self-check reports "Precise location not granted". Go to app settings and switch location permission to "Precise location".
+4. **Wi-Fi / Fused Location interference**: Some devices force location updates from Wi-Fi scanning or fused positioning, causing location snap-back. Try temporarily disabling Wi-Fi or turning off "Wi-Fi scanning" in system settings.
+5. **Provider registration failure**: Self-check displays the thrown exception. This commonly occurs on heavily customized vendor ROMs that restrict `addTestProvider`.
+6. **Read-back count is normal, but a specific app does not update**: That application may rely on Google Play Services FusedLocationProvider, a proprietary location SDK, or explicitly inspect `location.isFromMockProvider()`. Apps with active mock detection cannot be overridden in a non-root environment.
 
-Further ADB checks:
+**Further ADB Diagnostics**:
 
 ```bash
 adb shell appops get com.gowithline.mock android:mock_location
@@ -140,58 +146,58 @@ adb logcat -d -s GoWithLineService | tail -100
 adb shell dumpsys location | grep -A4 -i "last location"
 ```
 
-If GPS/NETWORK succeed and the injection count grows but system read-back stays 0, share the self-check text and `adb logcat -s GoWithLineService` output; that distinguishes a ROM permission block from rejected provider parameters.
+> If GPS/NETWORK injection succeeds and injection count keeps increasing while "System read-back" remains 0, please open an Issue with the exported self-check text and `adb logcat -s GoWithLineService` output so we can help determine whether it is a ROM permission restriction or provider parameter rejection.
 
-### How do I zoom or pan while drawing?
+### How do I zoom or pan the map while drawing a route?
 
-In drawing mode:
+In route drawing mode:
 
-- **One finger:** draws;
-- **Two fingers:** zoom and pan. When a two-finger gesture starts, the in-progress stroke is discarded to avoid accidental lines; release both fingers and draw again with one finger.
+- **Single finger**: Touch and drag to draw route segments;
+- **Two fingers**: Pinch to zoom or drag to pan the map. The moment two fingers are detected, the stroke currently in progress is automatically discarded to prevent accidental lines; lift both fingers and resume drawing with a single finger.
 
-### The map is blank / tiles fail to load
+### The map is blank or tiles fail to load
 
-Only OpenStreetMap is built in, and tiles may be affected by network, region or service policy. If they fail, open Settings → Map layer and enter your own XYZ tile template (a service you are authorized to use). The project does not bundle offline maps or redistribute tile data.
+By default, the application only includes OpenStreetMap tiles (the HOT style mirror hosted by OpenStreetMap France). Tile loading may occasionally fail due to international network latency, regional restrictions, or upstream server policies. If tiles fail to load, navigate to "Settings → Map layer", choose "Custom XYZ…", confirm, and enter a tile URL template and coordinate system for an XYZ tile service you are authorized to use. The template must include `{z}`, `{x}`, and `{y}` placeholders (e.g. `https://tiles.example.com/{z}/{x}/{y}.png`). The project does not bundle offline map packages or redistribute proprietary tile datasets.
 
 ## Changelog
 
 ### 1.0
 
-First stable release.
+Initial official release.
 
-- Freehand multi-segment routes, with two-finger zoom/pan while drawing; constant speed in km/h along the polyline.
-- Injection into GPS / NETWORK / FUSED test providers; pause/resume/stop/loop.
-- Joystick mode with direction lock; floating speed window; OpenStreetMap + custom XYZ layers.
-- Built-in self-check; test providers are removed and the real location restored on stop.
-- GPL-3.0, no account, no ads, no self-hosted backend, Android 8.0+.
+- Freehand multi-segment route drawing with two-finger pan/zoom support; constant speed simulation in km/h along polylines.
+- Concurrent injection into GPS, NETWORK, and FUSED test providers; pause, resume, stop, and route loop modes.
+- Virtual joystick mode with directional cruise lock; floating speed overlay; OpenStreetMap and custom XYZ tile layers.
+- Built-in environment self-check; automatic provider unregistration and real location restoration upon stopping.
+- GPL-3.0 open source, zero accounts, zero ads, zero custom backends, compatible with Android 8.0+.
 
-## A personal note
+## A Personal Note
 
-Dragging a joystick by hand gets old, doesn't it? .jpg
+老实摇杆，很枯燥吧？.jpg
 
-I used to do mock movement with Yingsuo, but hand-dragging the joystick is awkward at times, and reproducing a fixed route and speed is even more of a pain. So I built this little custom-route tool with an AI.
+之前一直习惯用影梭模拟位移，但很多时候自己手动推着摇杆实在不太方便，想要稳定复现一条固定路线和设定速度就更费劲了。于是让大肥鱼折腾了这个支持自定义画路线的小工具。
 
-Besides, Yingsuo has gone closed source~
+况且影梭也已经转为闭源了~
 
-The test-provider idea comes from Yingsuo; the map and route progression are independent implementations.
+测试 Provider 的底层注入思路借鉴了影梭，地图与路线推进算法则是完全独立实现的。
 
-Issues and PRs are welcome~
+欢迎Issue和PR~
 
 ## Build
 
-Requirements: JDK 17+, Android SDK Platform 36, Build-Tools 36.0.0.
+**Requirements**: JDK 17+, Android SDK Platform 36, Build-Tools 36.0.0.
 
 ```bash
 cd GoWithLine
 ./gradlew assembleDebug
 ```
 
-Output: `app/build/outputs/apk/debug/app-debug.apk` (debug signing, local testing only).
+Debug artifact: `app/build/outputs/apk/debug/app-debug.apk` (debug signed, for local testing and debugging).
 
-Release signing:
+### Release Signing
 
-1. Generate and keep a keystore outside the repository (if it is lost, you cannot publish an update that installs over the existing app).
-2. Configure it in the Gradle user home's `gradle.properties` (default `~/.gradle`, or `GRADLE_USER_HOME` if set; do not put secrets in the repository):
+1. Generate and securely store a release keystore outside the project repository (if lost, you will not be able to publish update packages over existing installations);
+2. Configure signing credentials in `gradle.properties` located in your local Gradle user home directory (defaults to `~/.gradle/gradle.properties`, or the path specified by `GRADLE_USER_HOME`; **never commit credentials to Git**):
 
 ```properties
 GOWITHLINE_STORE_FILE=<path>/gowithline-release.jks
@@ -200,48 +206,48 @@ GOWITHLINE_KEY_ALIAS=gowithline
 GOWITHLINE_KEY_PASSWORD=...
 ```
 
-3. Build:
+3. Run the release build:
 
 ```bash
 ./gradlew assembleRelease
 ```
 
-Output: `app/build/outputs/apk/release/app-release.apk`.
+Release artifact: `app/build/outputs/apk/release/app-release.apk`.
 
-Unit tests:
+### Unit Tests
 
 ```bash
 ./gradlew :app:testDebugUnitTest
 ```
 
-## Project layout
+## Project Structure
 
 ```
 app/src/main/java/com/gowithline/mock/
-├─ MainActivity.java               map, drawing, speed, state and permissions
-├─ geo/                            pure Java geometry, coordinate conversion, path, simulator
-├─ map/                            osmdroid layers and XYZ tile sources
-├─ service/MockLocationService.java foreground service, test providers, notification
-├─ ui/DrawOverlayView.java         freehand drawing overlay
-└─ util/                           mock-location detection, formatting
+├─ MainActivity.java                Main UI controller: map interaction, drawing, speed control, and permissions
+├─ geo/                             Pure Java geometry: coordinate conversions, pathing, simulator, and simplification
+├─ map/                             Map integration: osmdroid layer configurations and custom XYZ tile sources
+├─ service/MockLocationService.java Core foreground service: test provider injection, broadcasts, and persistent notifications
+├─ ui/DrawOverlayView.java          Top-level freehand drawing overlay view
+└─ util/                            Utilities: mock location self-check diagnostics, formatting, and helpers
 ```
 
 ## Privacy
 
-- No account, no self-hosted backend, no advertising or analytics SDK; route, speed, layer and map center are stored only in local SharedPreferences.
-- Built-in OpenStreetMap tiles are served by the HOT service of OpenStreetMap France; with a custom XYZ template, requests go to the server you enter. Both expose your IP and the requested coordinates to that service.
+- **Zero Data Collection**: No accounts, no self-hosted backends, and no embedded third-party advertising or analytics SDKs. Drawn routes, speed settings, layer preferences, and map center coordinates are stored exclusively on your local device via SharedPreferences.
+- **Tile Network Requests**: Built-in OpenStreetMap tiles are served by OpenStreetMap France's HOT infrastructure; when using custom XYZ tiles, requests are sent directly to the server you configure. During tile retrieval, the respective server will receive your IP address and the requested tile coordinates in accordance with standard HTTP protocols.
 
-See [PRIVACY.md](PRIVACY.md).
+For further details, refer to [PRIVACY.md](PRIVACY.md).
 
 ## Disclaimer
 
-The app mocks location through Android's debugging API and is intended for development, teaching demos and location debugging only. Do not use it for game cheating, attendance/campus running or other prohibited purposes. Some apps can detect mock locations, and vendor ROMs may impose restrictions; by using the app you accept the relevant responsibility.
+This application utilizes official Android developer debugging APIs for mock location injection and is intended solely for software development, educational demonstrations, and debugging location-aware features. Do not use this application for attendance fraud, campus fitness test manipulation, game location spoofing, or any purpose that violates applicable laws or third-party platform terms of service. Certain applications have the capability to detect mock locations, and device manufacturers may impose specific firmware-level restrictions; by using this application, you acknowledge these conditions and assume all associated risks and responsibilities.
 
 ## License
 
 Copyright (C) 2026 99galaxy
 
-This project is released under the [GNU General Public License v3.0](LICENSE) (GPL-3.0). SPDX identifier: `GPL-3.0-only`.
+This project is licensed under the [GNU General Public License v3.0](LICENSE) (GPL-3.0). SPDX Identifier: `GPL-3.0-only`.
 
 ```
 This program is free software: you can redistribute it and/or modify
@@ -257,10 +263,10 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 ```
 
-The “GoWithLine” and “路线模拟” names and the icon are not licensed with the code; this is a trademark/identifier reservation permitted by GPLv3 section 7(e), not an additional restriction on the license. Third-party libraries, map data and tile terms are listed in [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) and [NOTICE](NOTICE).
+The names "GoWithLine" and "路线模拟", as well as the application icon, are reserved and are not licensed alongside the source code; this represents a trademark and identifier reservation permitted under Section 7(e) of the GPLv3 license and does not constitute an additional restriction on the GPL terms. Third-party library licenses, map data attributions, and tile terms are documented in [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) and [NOTICE](NOTICE).
 
 ## Acknowledgements
 
-- [ZCShou/GoGoGo](https://github.com/ZCShou/GoGoGo): no-root mock location idea and coordinate handling reference.
-- [osmdroid](https://github.com/osmdroid/osmdroid): map rendering (Apache-2.0).
-- Map data: © OpenStreetMap contributors (ODbL). Built-in tiles are the HOT style, served by OpenStreetMap France.
+- [ZCShou/GoGoGo](https://github.com/ZCShou/GoGoGo): Inspired the no-root mock location injection approach and cross-coordinate system handling.
+- [osmdroid](https://github.com/osmdroid/osmdroid): Excellent open-source map rendering library for Android (licensed under Apache-2.0).
+- Map data: © OpenStreetMap contributors (licensed under ODbL). Built-in map tiles use the HOT style, graciously provided by OpenStreetMap France.

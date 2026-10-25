@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:paddingStart="24dp"
+    android:paddingTop="4dp"
+    android:paddingEnd="24dp"
+    android:paddingBottom="4dp">
+
+    <TextView
+        android:id="@+id/layerNote"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:lineSpacingExtra="2dp"
+        android:text="@string/dialog_layer_note"
+        android:textColor="@color/text_secondary"
+        android:textSize="13sp" />
+
+    <RadioGroup
+        android:id="@+id/layerGroup"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:orientation="vertical">
+
+        <RadioButton
+            android:id="@+id/layerOsm"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:checked="true"
+            android:minHeight="48dp"
+            android:text="@string/layer_osm"
+            android:textSize="14sp" />
+
+        <RadioButton
+            android:id="@+id/layerCustom"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minHeight="48dp"
+            android:text="@string/layer_custom"
+            android:textSize="14sp" />
+    </RadioGroup>
+</LinearLayout>

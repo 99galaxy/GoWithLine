@@ -30,6 +30,7 @@ import android.util.Log;
 
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
+import androidx.core.location.LocationCompat;
 
 import com.gowithline.mock.MainActivity;
 import com.gowithline.mock.R;
@@ -803,9 +804,9 @@ public class MockLocationService extends Service {
                 if (location == null || Double.isNaN(injectedLat)) {
                     return;
                 }
-                double distance = GeoMath.distanceMeters(injectedLat, injectedLng,
-                        location.getLatitude(), location.getLongitude());
-                if (distance <= 50.0) {
+                if (EchoMatcher.isEcho(injectedLat, injectedLng,
+                        location.getLatitude(), location.getLongitude(),
+                        LocationCompat.isMock(location))) {
                     echoCount++;
                     echoLat = location.getLatitude();
                     echoLng = location.getLongitude();

@@ -3,6 +3,7 @@
     <color name="primary">#1565C0</color>
     <color name="primary_dark">#0D47A1</color>
     <color name="accent">#00897B</color>
+    <color name="accent_dark">#00695C</color>
     <color name="white">#FFFFFF</color>
     <color name="text_primary">#1B2430</color>
     <color name="text_secondary">#5F6B7A</color>
@@ -10,10 +11,16 @@
     <color name="route_blue">#1E88E5</color>
     <color name="start_green">#2E7D32</color>
     <color name="end_red">#C62828</color>
-    <color name="overlay_bg">#F2FFFFFF</color>
+    <color name="overlay_bg">#F7FFFFFF</color>
     <color name="status_ok">#2E7D32</color>
     <color name="status_error">#C62828</color>
     <color name="divider">#1F000000</color>
-    <color name="settings_bg">#F5F7FA</color>
-    <color name="switch_track">#66B0BEC5</color>
+    <color name="outline">#E3E8ED</color>
+    <color name="outline_strong">#C9D2DA</color>
+    <color name="surface_tint">#EDF3F7</color>
+    <color name="mode_chip_bg">#E6F3F0</color>
+    <color name="settings_bg">#F4F6F8</color>
+    <color name="switch_thumb_off">#75818C</color>
+    <color name="switch_track_on">#4D00897B</color>
+    <color name="switch_track_off">#DCE3E9</color>
 </resources>

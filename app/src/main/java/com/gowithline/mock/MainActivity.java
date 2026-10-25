@@ -94,6 +94,7 @@ public class MainActivity extends AppCompatActivity {
     private TextView textRouteInfo;
     private TextView textMockStatus;
     private TextView textAttribution;
+    private TextView textMode;
     private View routeEditRow;
     private FloatingActionButton fabLocate;
     private FloatingActionButton fabFollow;
@@ -301,6 +302,7 @@ public class MainActivity extends AppCompatActivity {
         textRouteInfo = findViewById(R.id.textRouteInfo);
         textMockStatus = findViewById(R.id.textMockStatus);
         textAttribution = findViewById(R.id.textAttribution);
+        textMode = findViewById(R.id.textMode);
         routeEditRow = findViewById(R.id.routeEditRow);
         fabLocate = findViewById(R.id.fabLocate);
         fabFollow = findViewById(R.id.fabFollow);
@@ -634,6 +636,11 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void applyModeUi() {
+        if (textMode != null) {
+            textMode.setText(joystickMode
+                    ? R.string.settings_mode_joystick
+                    : R.string.settings_mode_route);
+        }
         if (routeEditRow != null) {
             routeEditRow.setVisibility(joystickMode ? View.GONE : View.VISIBLE);
         }

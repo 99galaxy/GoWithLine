@@ -6,8 +6,13 @@
         <item name="colorOnPrimary">@color/white</item>
         <item name="colorSecondary">@color/accent</item>
         <item name="colorOnSecondary">@color/white</item>
-        <item name="android:statusBarColor">@color/primary_dark</item>
-        <item name="android:windowLightStatusBar">false</item>
+        <item name="android:statusBarColor">@color/panel_bg</item>
+        <item name="android:windowLightStatusBar">true</item>
         <item name="android:fontFamily">sans</item>
+    </style>
+
+    <style name="Theme.GoWithLine.Settings" parent="Theme.GoWithLine">
+        <item name="android:statusBarColor">@color/settings_bg</item>
+        <item name="android:windowLightStatusBar">true</item>
     </style>
 </resources>

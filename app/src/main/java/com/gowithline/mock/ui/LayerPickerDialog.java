@@ -30,26 +30,39 @@ public final class LayerPickerDialog {
     public static void show(Activity activity, String currentId,
                             String customUrl, MapLayer.CoordSystem customCoord,
                             Callback callback) {
-        String[] items = new String[]{
-                activity.getString(R.string.layer_osm),
-                activity.getString(R.string.layer_custom)
-        };
-        int checked = MapLayer.ID_CUSTOM.equals(currentId) ? 1 : 0;
+        // AppCompat's AlertController does not attach single-choice items to
+        // the dialog when a message is also present: setupContent() shows the
+        // message and returns before inserting the ListView. Keep the note and
+        // the choices in a layout we own instead of combining setMessage()
+        // with setSingleChoiceItems().
+        View content = activity.getLayoutInflater()
+                .inflate(R.layout.dialog_layer_picker, null);
+        RadioGroup layerGroup = content.findViewById(R.id.layerGroup);
+        layerGroup.check(MapLayer.ID_CUSTOM.equals(currentId)
+                ? R.id.layerCustom
+                : R.id.layerOsm);
 
-        new MaterialAlertDialogBuilder(activity)
+        AlertDialog dialog = new MaterialAlertDialogBuilder(activity)
                 .setTitle(R.string.dialog_layer_title)
-                .setMessage(R.string.dialog_layer_note)
-                .setSingleChoiceItems(items, checked, (dialog, which) -> {
-                    dialog.dismiss();
-                    if (which == 1) {
-                        showCustomDialog(activity, customUrl, customCoord, callback);
-                    } else {
-                        callback.onLayerChosen(MapLayer.ID_OSM, null,
-                                MapLayer.CoordSystem.WGS84);
-                    }
-                })
+                .setView(content)
+                .setPositiveButton(R.string.dialog_confirm, null)
                 .setNegativeButton(R.string.dialog_cancel, null)
-                .show();
+                .create();
+
+        dialog.setOnShowListener(ignored ->
+                dialog.getButton(DialogInterface.BUTTON_POSITIVE)
+                        .setOnClickListener(v -> {
+                            boolean custom = layerGroup.getCheckedRadioButtonId()
+                                    == R.id.layerCustom;
+                            dialog.dismiss();
+                            if (custom) {
+                                showCustomDialog(activity, customUrl, customCoord, callback);
+                            } else {
+                                callback.onLayerChosen(MapLayer.ID_OSM, null,
+                                        MapLayer.CoordSystem.WGS84);
+                            }
+                        }));
+        dialog.show();
     }
 
     private static void showCustomDialog(Activity activity, String currentUrl,
