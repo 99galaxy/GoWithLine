@@ -2,7 +2,7 @@
 
 在地图上绘制路线，让手机定位按设定速度平滑移动。免 Root、无账号、无广告的开源 Android 定位测试工具。[English](README.en.md)
 
-[![release](https://img.shields.io/badge/release-1.1-blue)](https://github.com/99galaxy/GoWithLine/releases/latest)
+[![release](https://img.shields.io/badge/release-1.2-blue)](https://github.com/99galaxy/GoWithLine/releases/latest)
 [![license](https://img.shields.io/badge/license-GPL--3.0-blue)](LICENSE)
 ![Android](https://img.shields.io/badge/Android-8.0%2B-3ddc84)
 
@@ -60,7 +60,7 @@
    - 若重新安装应用，系统可能重置悬浮窗权限，此时开关会提示授权，按指引重新开启即可。
 8. **自定义地图图层**：前往「设置 → 地图图层」，选择「自定义 XYZ…」并确认，输入瓦片 URL 模板并选择对应坐标系（WGS-84 或 GCJ-02），确认后返回地图即可自动应用并换算已有路线。模板必须包含 `{z}`、`{x}`、`{y}` 占位符，例如 `https://tiles.example.com/{z}/{x}/{y}.png`。
 9. **环境自检**：前往「设置 → 自检」，可一键检测开发者选项开启状态、模拟位置应用选择、系统定位服务、Provider 注入状态以及系统回读结果。
-10. **关于与检查更新**：前往「设置 → 关于」，可查看当前版本（1.1）、开发者 GitHub 主页、开源仓库地址并检查新版本。
+10. **关于与检查更新**：前往「设置 → 关于」，可查看当前版本（1.2）、开发者 GitHub 主页、开源仓库地址并检查新版本。
     - 检查更新基于 GitHub Releases API；受网络环境影响若检查失败，弹窗将提供 Releases 页面快捷入口。
 
 > 首次启动若提示权限不足，按照应用内对话框指引跳转至系统设置开启对应权限即可。
@@ -160,6 +160,13 @@ adb shell dumpsys location | grep -A4 -i "last location"
 本项目默认仅内置 OpenStreetMap（由 OpenStreetMap France 托管的 HOT 样式服务），其瓦片加载可能受国际网络波动、地域访问限制或服务节点策略影响。若瓦片加载失败，建议前往「设置 → 地图图层」，选择「自定义 XYZ…」并确认，填入您拥有合法访问权限的第三方瓦片 URL 模板和对应坐标系。模板中必须包含 `{z}`、`{x}`、`{y}` 占位符（例如 `https://tiles.example.com/{z}/{x}/{y}.png`），确认返回即可即时生效。本项目不内置离线地图包，亦不分发任何第三方商业地图瓦片。
 
 ## 更新日志
+
+### 1.2
+
+- 修复绘制路线时撤销无效的问题：无需结束绘制即可撤销上一笔，支持连续撤销，撤销到空后仍可继续绘制。
+- 修复路线完成后“重新开始”按钮不可用的问题，可直接重启路线；等待重启期间继续保持终点定位。
+- 修复从通知栏停止模拟后设置页仍锁定模式与图层的问题，返回主界面时保留新选择的设置。
+- 修复跨越 ±180° 日期变更线时路线位置跳跃的问题，按最短经度差插值。
 
 ### 1.1
 

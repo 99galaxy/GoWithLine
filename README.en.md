@@ -2,7 +2,7 @@
 
 Route simulation for Android — draw a route, set a speed, and let your mock location glide along it smoothly. A lightweight, root-free, account-free, and ad-free open-source location testing tool. [中文](README.md)
 
-[![release](https://img.shields.io/badge/release-1.1-blue)](https://github.com/99galaxy/GoWithLine/releases/latest)
+[![release](https://img.shields.io/badge/release-1.2-blue)](https://github.com/99galaxy/GoWithLine/releases/latest)
 [![license](https://img.shields.io/badge/license-GPL--3.0-blue)](LICENSE)
 ![Android](https://img.shields.io/badge/Android-8.0%2B-3ddc84)
 
@@ -60,7 +60,7 @@ This application injects mock locations via Android developer debugging APIs. Ce
    - If the app is reinstalled, the operating system may revoke this permission; the switch will prompt you to re-grant it when needed.
 8. **Custom Map Tile Layers**: Go to "Settings → Map layer → Custom XYZ…" → Confirm → enter the tile URL template and select the coordinate system (WGS-84 or GCJ-02) → Confirm. Returning to the map applies the new layer and automatically reprojects any existing route coordinates. The template must include `{z}`, `{x}`, and `{y}` placeholders, such as `https://tiles.example.com/{z}/{x}/{y}.png`.
 9. **Environment Self-Check**: Open "Settings → Self-check" to run automated diagnostics on developer options, mock location app selection, system location toggles, provider injection status, and system read-back counts.
-10. **About & Update Checks**: Open "Settings → About" to view the installed version (1.1), developer GitHub profile, source code repository, and check for new updates.
+10. **About & Update Checks**: Open "Settings → About" to view the installed version (1.2), developer GitHub profile, source code repository, and check for new updates.
     - Update checks query the GitHub Releases API. If connectivity issues cause the check to fail, a direct link to the Releases page will be provided.
 
 > If permission prompts appear on first launch, simply follow the in-app dialog instructions to navigate to system settings and grant the required permissions.
@@ -160,6 +160,13 @@ In route drawing mode:
 By default, the application only includes OpenStreetMap tiles (the HOT style mirror hosted by OpenStreetMap France). Tile loading may occasionally fail due to international network latency, regional restrictions, or upstream server policies. If tiles fail to load, navigate to "Settings → Map layer", choose "Custom XYZ…", confirm, and enter a tile URL template and coordinate system for an XYZ tile service you are authorized to use. The template must include `{z}`, `{x}`, and `{y}` placeholders (e.g. `https://tiles.example.com/{z}/{x}/{y}.png`). The project does not bundle offline map packages or redistribute proprietary tile datasets.
 
 ## Changelog
+
+### 1.2
+
+- Fixed undo while drawing: undo the last stroke without leaving drawing mode, undo repeatedly, and continue drawing after the route is empty.
+- Fixed the disabled Restart button after a route finishes. Restart directly while keeping the endpoint location held until restarting.
+- Fixed mode and map-layer controls staying locked after stopping from the notification. New settings are retained when returning to the main screen.
+- Fixed position jumps on routes crossing the ±180° date line by interpolating along the shortest longitude delta.
 
 ### 1.1
 
