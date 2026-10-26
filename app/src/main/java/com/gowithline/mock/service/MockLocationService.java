@@ -46,6 +46,7 @@ import com.gowithline.mock.util.Prefs;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.concurrent.CopyOnWriteArraySet;
 
 /**
  * Foreground service that drives both GPS and NETWORK test providers, using
@@ -133,7 +134,7 @@ public class MockLocationService extends Service {
 
     private volatile SimulationSnapshot snapshot = SimulationSnapshot.idle();
     private volatile ServiceDiagnostics diagnostics = ServiceDiagnostics.idle();
-    private volatile Listener listener;
+    private final CopyOnWriteArraySet<Listener> listeners = new CopyOnWriteArraySet<>();
 
     private final Runnable tickRunnable = new Runnable() {
         @Override
@@ -267,6 +268,7 @@ public class MockLocationService extends Service {
     @Override
     public void onDestroy() {
         destroyed = true;
+        listeners.clear();
         if (workerHandler != null) {
             workerHandler.removeCallbacksAndMessages(null);
         }
@@ -370,17 +372,19 @@ public class MockLocationService extends Service {
         return current != null && current.isActive();
     }
 
-    public void setListener(Listener newListener) {
-        listener = newListener;
-        if (newListener != null) {
+    public void addListener(Listener newListener) {
+        if (newListener != null && listeners.add(newListener)) {
             SimulationSnapshot current = snapshot;
             mainHandler.post(() -> {
-                Listener active = listener;
-                if (active != null) {
-                    active.onSnapshot(current);
+                if (listeners.contains(newListener)) {
+                    newListener.onSnapshot(current);
                 }
             });
         }
+    }
+
+    public void removeListener(Listener oldListener) {
+        listeners.remove(oldListener);
     }
 
     // ---------------------------------------------------------------------
@@ -936,16 +940,13 @@ public class MockLocationService extends Service {
     }
 
     private void deliver(SimulationSnapshot current) {
-        Listener active = listener;
-        if (active == null) {
-            return;
+        for (Listener target : listeners) {
+            mainHandler.post(() -> {
+                if (listeners.contains(target)) {
+                    target.onSnapshot(current);
+                }
+            });
         }
-        mainHandler.post(() -> {
-            Listener target = listener;
-            if (target != null) {
-                target.onSnapshot(current);
-            }
-        });
     }
 
     private void createNotificationChannel() {

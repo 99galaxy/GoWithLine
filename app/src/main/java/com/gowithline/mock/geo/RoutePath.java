@@ -97,9 +97,22 @@ public final class RoutePath {
 
         PointD a = points.get(segment);
         PointD b = points.get(segment + 1);
+        // Follow the short arc when a segment crosses the +/-180 degree seam.
+        double lngDelta = b.lng - a.lng;
+        if (lngDelta > 180.0) {
+            lngDelta -= 360.0;
+        } else if (lngDelta < -180.0) {
+            lngDelta += 360.0;
+        }
+        double lng = a.lng + lngDelta * ratio;
+        if (lng > 180.0) {
+            lng -= 360.0;
+        } else if (lng < -180.0) {
+            lng += 360.0;
+        }
         return new PointD(
                 a.lat + (b.lat - a.lat) * ratio,
-                a.lng + (b.lng - a.lng) * ratio);
+                lng);
     }
 
     private double segmentBearing(double distance) {

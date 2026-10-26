@@ -133,7 +133,8 @@ public class MainActivity extends AppCompatActivity {
         public void onServiceConnected(ComponentName name, IBinder binder) {
             service = ((MockLocationService.LocalBinder) binder).getService();
             bound = true;
-            service.setListener(snapshotListener);
+            syncServiceAndSettings();
+            service.addListener(snapshotListener);
             // The service itself gates on mode (joystick always shows) and on
             // the route-mode preference, so this is a safe re-arm for runs
             // whose overlay was closed earlier.
@@ -616,7 +617,7 @@ public class MainActivity extends AppCompatActivity {
         boolean canStart = joystickMode || hasRoute;
         boolean validSpeed = parseSpeedKmh() > 0;
 
-        btnStart.setEnabled(!active && !starting && canStart && validSpeed);
+        btnStart.setEnabled(snapshot.canStart() && !starting && canStart && validSpeed);
         if (starting) {
             btnStart.setText(R.string.btn_starting);
         } else {
@@ -717,7 +718,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void undoStroke() {
-        if (drawMode || lastSnapshot.isActive() || routeStrokes.isEmpty()) {
+        if (lastSnapshot.isActive() || routeStrokes.isEmpty()) {
             return;
         }
         routeStrokes.remove(routeStrokes.size() - 1);
@@ -913,7 +914,7 @@ public class MainActivity extends AppCompatActivity {
     // ---------------------------------------------------------------------
 
     private void startSimulation() {
-        if (lastSnapshot.isActive() || starting) {
+        if (!lastSnapshot.canStart() || starting) {
             return;
         }
         if (drawMode) {
@@ -1379,9 +1380,20 @@ public class MainActivity extends AppCompatActivity {
         if (mapView != null) {
             mapView.onResume();
         }
+        syncServiceAndSettings();
+        updateMockStatus();
+    }
+
+    private void syncServiceAndSettings() {
+        // Binding is asynchronous. Wait for the current service state before
+        // deciding whether settings changed while this activity was stopped
+        // are locked (e.g. after Stop was pressed in the notification).
+        if (service == null) {
+            return;
+        }
+        applySnapshot(service.getSnapshot());
         syncLayerFromPrefs();
         syncModeFromPrefs();
-        updateMockStatus();
     }
 
     @Override
@@ -1397,7 +1409,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onStop() {
         if (bindingRequested) {
             if (service != null) {
-                service.setListener(null);
+                service.removeListener(snapshotListener);
             }
             try {
                 unbindService(serviceConnection);

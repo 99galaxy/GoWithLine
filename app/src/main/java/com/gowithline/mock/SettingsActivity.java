@@ -72,11 +72,18 @@ public class SettingsActivity extends AppCompatActivity {
     private boolean pendingJoystickMode;
     private boolean checkingUpdate;
 
+    private final MockLocationService.Listener snapshotListener = snapshot -> {
+        updateControlStates();
+        updateModeUi();
+        updateFloatingUi();
+    };
+
     private final ServiceConnection connection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder binder) {
             service = ((MockLocationService.LocalBinder) binder).getService();
             bound = true;
+            service.addListener(snapshotListener);
             updateControlStates();
             updateModeUi();
             updateFloatingUi();
@@ -176,6 +183,9 @@ public class SettingsActivity extends AppCompatActivity {
     @Override
     protected void onStop() {
         if (bindingRequested) {
+            if (service != null) {
+                service.removeListener(snapshotListener);
+            }
             try {
                 unbindService(connection);
             } catch (IllegalArgumentException ignored) {

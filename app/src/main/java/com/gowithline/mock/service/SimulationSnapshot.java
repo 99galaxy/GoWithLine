@@ -60,6 +60,11 @@ public final class SimulationSnapshot {
         return state == STATE_RUNNING || state == STATE_PAUSED || state == STATE_FINISHED;
     }
 
+    /** Whether the UI may start a new simulation from this state. */
+    public boolean canStart() {
+        return state == STATE_IDLE || state == STATE_ERROR || state == STATE_FINISHED;
+    }
+
     public boolean hasPosition() {
         return !Double.isNaN(lat) && !Double.isNaN(lng);
     }

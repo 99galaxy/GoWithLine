@@ -55,4 +55,30 @@ public class RoutePathTest {
     public void rejectsEmptyRoutes() {
         new RoutePath(List.of());
     }
+
+    @Test
+    public void crossesDateLineEastwardWithoutJumpingToGreenwich() {
+        RoutePath path = new RoutePath(Arrays.asList(
+                new PointD(0, 179.999), new PointD(0, -179.999)));
+
+        assertEquals(222.390, path.getTotalMeters(), 0.01);
+        assertEquals(179.9995, path.sampleAt(path.getTotalMeters() * 0.25).point.lng, 1e-7);
+        assertEquals(180.0, Math.abs(path.sampleAt(path.getTotalMeters() * 0.5).point.lng), 1e-7);
+        RoutePath.Sample sample = path.sampleAt(path.getTotalMeters() * 0.75);
+        assertEquals(-179.9995, sample.point.lng, 1e-7);
+        assertEquals(90.0, sample.bearingDegrees, 1e-6);
+        assertEquals(-179.999, path.sampleAt(path.getTotalMeters()).point.lng, 1e-7);
+    }
+
+    @Test
+    public void crossesDateLineWestwardWithoutJumpingToGreenwich() {
+        RoutePath path = new RoutePath(Arrays.asList(
+                new PointD(0, -179.999), new PointD(0, 179.999)));
+
+        assertEquals(-179.9995, path.sampleAt(path.getTotalMeters() * 0.25).point.lng, 1e-7);
+        assertEquals(180.0, Math.abs(path.sampleAt(path.getTotalMeters() * 0.5).point.lng), 1e-7);
+        RoutePath.Sample sample = path.sampleAt(path.getTotalMeters() * 0.75);
+        assertEquals(179.9995, sample.point.lng, 1e-7);
+        assertEquals(270.0, sample.bearingDegrees, 1e-6);
+    }
 }
