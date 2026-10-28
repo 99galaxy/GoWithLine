@@ -59,9 +59,11 @@ import com.gowithline.mock.util.Prefs;
 
 import org.osmdroid.api.IGeoPoint;
 import org.osmdroid.config.Configuration;
+import org.osmdroid.events.MapEventsReceiver;
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
 import org.osmdroid.views.overlay.Marker;
+import org.osmdroid.views.overlay.MapEventsOverlay;
 import org.osmdroid.views.overlay.Overlay;
 import org.osmdroid.views.overlay.OverlayWithIW;
 import org.osmdroid.views.overlay.Polyline;
@@ -117,6 +119,7 @@ public class MainActivity extends AppCompatActivity {
     private boolean starting;
     private boolean settingSpeed;
     private boolean joystickMode;
+    private PointD joystickStartWgs;
     private boolean bound;
     private boolean bindingRequested;
     private MockLocationService service;
@@ -156,6 +159,7 @@ public class MainActivity extends AppCompatActivity {
                 prefs.getString(Prefs.SIMULATION_MODE, Prefs.MODE_ROUTE));
         configureOsmdroid();
         currentLayer = restoreLayer();
+        restoreJoystickStart();
 
         setContentView(R.layout.activity_main);
         bindViews();
@@ -349,6 +353,17 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void initOverlays() {
+        mapView.getOverlays().add(new MapEventsOverlay(new MapEventsReceiver() {
+            @Override
+            public boolean singleTapConfirmedHelper(GeoPoint point) {
+                return selectJoystickStart(point);
+            }
+
+            @Override
+            public boolean longPressHelper(GeoPoint point) {
+                return false;
+            }
+        }));
         routePolyline = new Polyline(mapView);
         routePolyline.setColor(getColor(R.color.route_blue));
         routePolyline.setWidth(dp(6.0f));
@@ -356,6 +371,7 @@ public class MainActivity extends AppCompatActivity {
         mapView.getOverlays().add(routePolyline);
 
         startMarker = createMarker(R.drawable.ic_start_marker);
+        startMarker.setOnMarkerClickListener((clicked, view) -> !joystickMode);
         endMarker = createMarker(R.drawable.ic_end_marker);
         currentMarker = createMarker(R.drawable.ic_current_marker);
         currentMarker.setFlat(true);
@@ -382,6 +398,40 @@ public class MainActivity extends AppCompatActivity {
         marker.setOnMarkerClickListener((clicked, view) -> true);
         marker.setVisible(false);
         return marker;
+    }
+
+    private void restoreJoystickStart() {
+        String lat = prefs.getString(Prefs.JOYSTICK_START_LAT_WGS, null);
+        String lng = prefs.getString(Prefs.JOYSTICK_START_LNG_WGS, null);
+        if (lat == null || lng == null) {
+            return;
+        }
+        try {
+            double latitude = Double.parseDouble(lat);
+            double longitude = Double.parseDouble(lng);
+            if (Double.isFinite(latitude) && Double.isFinite(longitude)
+                    && latitude >= -90.0 && latitude <= 90.0
+                    && longitude >= -180.0 && longitude <= 180.0) {
+                joystickStartWgs = new PointD(latitude, longitude);
+            }
+        } catch (NumberFormatException ignored) {
+            // Invalid stored coordinates fall back to the map center.
+        }
+    }
+
+    private boolean selectJoystickStart(GeoPoint point) {
+        if (!joystickMode || starting || !bound || lastSnapshot.isActive()
+                || (service != null && service.isSimulationActive())) {
+            return false;
+        }
+        joystickStartWgs = toWgsPoint(new PointD(point.getLatitude(), point.getLongitude()));
+        prefs.edit()
+                .putString(Prefs.JOYSTICK_START_LAT_WGS, Double.toString(joystickStartWgs.lat))
+                .putString(Prefs.JOYSTICK_START_LNG_WGS, Double.toString(joystickStartWgs.lng))
+                .apply();
+        updateRouteOverlays();
+        updateRouteInfo();
+        return true;
     }
 
     private void initListeners() {
@@ -518,8 +568,12 @@ public class MainActivity extends AppCompatActivity {
         if (showRoute && hasPoints) {
             startMarker.setPosition(routePoints.get(0));
             endMarker.setPosition(routePoints.get(routePoints.size() - 1));
+        } else if (joystickMode && joystickStartWgs != null) {
+            startMarker.setPosition(toMapGeoPoint(joystickStartWgs));
         }
-        startMarker.setVisible(showRoute && hasPoints);
+        boolean showJoystickStart = joystickMode && joystickStartWgs != null
+                && !starting && !lastSnapshot.isActive();
+        startMarker.setVisible((showRoute && hasPoints) || showJoystickStart);
         endMarker.setVisible(showRoute && hasPoints);
         closeInfoWindows();
         mapView.invalidate();
@@ -540,6 +594,9 @@ public class MainActivity extends AppCompatActivity {
         if (joystickMode) {
             if (lastSnapshot.isActive()) {
                 showActiveInfo(lastSnapshot);
+            } else if (joystickStartWgs != null) {
+                textRouteInfo.setText(getString(R.string.route_joystick_start_selected,
+                        joystickStartWgs.lat, joystickStartWgs.lng));
             } else {
                 textRouteInfo.setText(R.string.route_joystick_hint);
             }
@@ -949,8 +1006,8 @@ public class MainActivity extends AppCompatActivity {
 
         if (joystickMode) {
             IGeoPoint center = mapView.getMapCenter();
-            PointD start = toWgsPoint(new PointD(
-                    center.getLatitude(), center.getLongitude()));
+            PointD start = joystickStartWgs != null ? joystickStartWgs
+                    : toWgsPoint(new PointD(center.getLatitude(), center.getLongitude()));
             intent.putExtra(MockLocationService.EXTRA_MODE,
                     SimulationSnapshot.MODE_JOYSTICK);
             intent.putExtra(MockLocationService.EXTRA_START_LAT, start.lat);
@@ -977,11 +1034,13 @@ public class MainActivity extends AppCompatActivity {
 
         lastErrorShown = null;
         starting = true;
+        updateRouteOverlays();
         updateButtons();
         try {
             ContextCompat.startForegroundService(this, intent);
         } catch (Exception e) {
             starting = false;
+            updateRouteOverlays();
             updateButtons();
             showErrorDialog(getString(R.string.error_foreground_start));
             return;
@@ -990,6 +1049,7 @@ public class MainActivity extends AppCompatActivity {
         uiHandler.postDelayed(() -> {
             if (starting) {
                 starting = false;
+                updateRouteOverlays();
                 updateButtons();
             }
         }, 3000L);
@@ -1055,6 +1115,7 @@ public class MainActivity extends AppCompatActivity {
             lastSnapshot = snapshot;
             starting = false;
             currentMarker.setVisible(false);
+            updateRouteOverlays();
             updateButtons();
             updateRouteInfo();
             updateMockStatus();
@@ -1089,6 +1150,7 @@ public class MainActivity extends AppCompatActivity {
 
         if (stateChanged) {
             lastTextUpdateElapsed = 0L;
+            updateRouteOverlays();
             updateButtons();
         }
 

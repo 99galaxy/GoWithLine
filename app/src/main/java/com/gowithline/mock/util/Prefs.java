@@ -28,6 +28,8 @@ public final class Prefs {
     public static final String SIMULATION_MODE = "simulation_mode";
     public static final String MODE_ROUTE = "route";
     public static final String MODE_JOYSTICK = "joystick";
+    public static final String JOYSTICK_START_LAT_WGS = "joystick_start_lat_wgs";
+    public static final String JOYSTICK_START_LNG_WGS = "joystick_start_lng_wgs";
 
     private Prefs() {
     }

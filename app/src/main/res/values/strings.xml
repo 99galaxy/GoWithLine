@@ -160,7 +160,8 @@
     <string name="settings_self_check_not_bound">模拟服务未连接，请稍后重试</string>
 
     <!-- Joystick / v1.1 -->
-    <string name="route_joystick_hint">摇杆模式：开始后在悬浮窗中拖动摇杆，固定速度移动；点摇杆头锁定/解锁</string>
+    <string name="route_joystick_hint">点击地图选择起点，再开始模拟；未选点时从地图中心出发</string>
+    <string name="route_joystick_start_selected">起点 %1$.5f, %2$.5f · 点击地图可重新选择</string>
     <string name="status_joystick_running">摇杆模式 · 已移动 %1$s</string>
     <string name="status_joystick_paused">摇杆模式 · 已暂停 · 已移动 %1$s</string>
     <string name="status_joystick_finished">摇杆模式 · 已停止 · 已移动 %1$s</string>

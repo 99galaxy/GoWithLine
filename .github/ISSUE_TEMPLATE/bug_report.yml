@@ -12,7 +12,7 @@ body:
     id: version
     attributes:
       label: GoWithLine 版本
-      placeholder: 1.2
+      placeholder: 1.2.1
     validations:
       required: true
 

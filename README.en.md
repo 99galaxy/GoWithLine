@@ -2,7 +2,7 @@
 
 Route simulation for Android — draw a route, set a speed, and let your mock location glide along it smoothly. A lightweight, root-free, account-free, and ad-free open-source location testing tool. [中文](README.md)
 
-[![release](https://img.shields.io/badge/release-1.2-blue)](https://github.com/99galaxy/GoWithLine/releases/latest)
+[![release](https://img.shields.io/badge/release-1.2.1-blue)](https://github.com/99galaxy/GoWithLine/releases/latest)
 [![license](https://img.shields.io/badge/license-GPL--3.0-blue)](LICENSE)
 ![Android](https://img.shields.io/badge/Android-8.0%2B-3ddc84)
 
@@ -50,7 +50,8 @@ This application injects mock locations via Android developer debugging APIs. Ce
 5. **Simulation Controls**: Pause, resume, or stop the simulation at any time from the app or directly via the system notification shade. Stopping the simulation immediately restores your device's real location.
 6. **Joystick Mode**:
    - Tap the gear icon in the toolbar → "Simulation mode" → select **Joystick mode** (requires the "Display over other apps" overlay permission on first use);
-   - Return to the main screen and tap "Start". A semi-transparent joystick and `−/+` speed buttons will appear on screen;
+   - Return to the main screen and tap the map to choose a start location, shown by a green marker. Tap again to replace it. Panning and zooming do not change the selection, and it is retained after restarting the app. Without a selection, the map center is used;
+   - Tap "Start" to display the minimalist translucent joystick and `−/+` speed buttons. Stop a running or paused simulation before choosing another start location;
    - Drag the joystick to steer at your configured speed; release to stop instantly—no route drawing needed;
    - The joystick knob displays the current speed (km/h) and a lock icon; tap the knob to toggle direction lock;
    - When locked, releasing your finger retains the deflection angle and continues moving forward; tap the knob again to stop;
@@ -60,7 +61,7 @@ This application injects mock locations via Android developer debugging APIs. Ce
    - If the app is reinstalled, the operating system may revoke this permission; the switch will prompt you to re-grant it when needed.
 8. **Custom Map Tile Layers**: Go to "Settings → Map layer → Custom XYZ…" → Confirm → enter the tile URL template and select the coordinate system (WGS-84 or GCJ-02) → Confirm. Returning to the map applies the new layer and automatically reprojects any existing route coordinates. The template must include `{z}`, `{x}`, and `{y}` placeholders, such as `https://tiles.example.com/{z}/{x}/{y}.png`.
 9. **Environment Self-Check**: Open "Settings → Self-check" to run automated diagnostics on developer options, mock location app selection, system location toggles, provider injection status, and system read-back counts.
-10. **About & Update Checks**: Open "Settings → About" to view the installed version (1.2), developer GitHub profile, source code repository, and check for new updates.
+10. **About & Update Checks**: Open "Settings → About" to view the installed version (1.2.1), developer GitHub profile, source code repository, and check for new updates.
     - Update checks query the GitHub Releases API. If connectivity issues cause the check to fail, a direct link to the Releases page will be provided.
 
 > If permission prompts appear on first launch, simply follow the in-app dialog instructions to navigate to system settings and grant the required permissions.
@@ -100,7 +101,7 @@ The service uses `SystemClock.elapsedRealtime()` to determine high-precision wal
 ### 4. Joystick Mode Architecture
 
 - The `simulation_mode` preference is persisted in storage and passed to the background service via Intent extras on startup.
-- Joystick mode bypasses route generation: the service starts from the current map center (WGS-84) and calculates subsequent waypoints along the joystick heading using `GeoMath.destinationPoint()`, advancing by `speed × Δt` on each tick.
+- Joystick mode bypasses route generation: the service starts from the selected map location, falling back to the map center when no point has been selected. The selection is stored in WGS-84 and its marker is reprojected for GCJ-02 layers. The service calculates subsequent waypoints along the joystick heading using `GeoMath.destinationPoint()`, advancing by `speed × Δt` on each tick.
 - The virtual joystick outputs only the heading angle and active state; travel speed remains strictly locked to the configured km/h value from the UI/overlay. Releasing touch or pausing halts movement immediately.
 - The joystick control is rendered inside a system-level overlay window (`TYPE_APPLICATION_OVERLAY`), allowing full steering control when switching to background apps or other tasks.
 - Direction lock is maintained internally by the joystick view: tapping the center knob toggles lock status; when unlocked, releasing the knob snaps back to center and halts movement; when locked, releasing preserves the deflection angle and continues reporting active state, keeping the service cruising forward at constant speed.
@@ -160,6 +161,12 @@ In route drawing mode:
 By default, the application only includes OpenStreetMap tiles (the HOT style mirror hosted by OpenStreetMap France). Tile loading may occasionally fail due to international network latency, regional restrictions, or upstream server policies. If tiles fail to load, navigate to "Settings → Map layer", choose "Custom XYZ…", confirm, and enter a tile URL template and coordinate system for an XYZ tile service you are authorized to use. The template must include `{z}`, `{x}`, and `{y}` placeholders (e.g. `https://tiles.example.com/{z}/{x}/{y}.png`). The project does not bundle offline map packages or redistribute proprietary tile datasets.
 
 ## Changelog
+
+### 1.2.1
+
+- Tap the map before starting joystick mode to choose a start location, shown by a green marker and coordinates. Tap again to replace it.
+- The selected start is saved across map panning, zooming, and app restarts, with coordinate conversion for WGS-84 and GCJ-02 layers.
+- Without a selection, the map center is still used. Stop a running or paused simulation before changing its start location.
 
 ### 1.2
 
