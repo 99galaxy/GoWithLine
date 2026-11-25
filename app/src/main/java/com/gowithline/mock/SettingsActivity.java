@@ -16,6 +16,8 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -68,9 +70,25 @@ public class SettingsActivity extends AppCompatActivity {
 
     private boolean initializingMode;
     private boolean initializingFloating;
-    private boolean pendingFloatingEnable;
-    private boolean pendingJoystickMode;
     private boolean checkingUpdate;
+
+    private final ActivityResultLauncher<Intent> floatingPermission = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(), result -> {
+                if (Settings.canDrawOverlays(this)) {
+                    handleFloatingToggle(true);
+                } else {
+                    toast(R.string.settings_overlay_denied);
+                }
+            });
+
+    private final ActivityResultLauncher<Intent> joystickPermission = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(), result -> {
+                if (Settings.canDrawOverlays(this)) {
+                    handleModeSelection(R.id.modeJoystickButton);
+                } else {
+                    toast(R.string.settings_overlay_denied);
+                }
+            });
 
     private final MockLocationService.Listener snapshotListener = snapshot -> {
         updateControlStates();
@@ -84,6 +102,9 @@ public class SettingsActivity extends AppCompatActivity {
             service = ((MockLocationService.LocalBinder) binder).getService();
             bound = true;
             service.addListener(snapshotListener);
+            // The permission result can arrive before this asynchronous bind.
+            // The service checks the saved preference, permission and run state.
+            service.showFloatingWindow();
             updateControlStates();
             updateModeUi();
             updateFloatingUi();
@@ -173,7 +194,6 @@ public class SettingsActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        handlePendingPermissions();
         updateModeUi();
         updateFloatingUi();
         updateLayerSummary();
@@ -231,9 +251,8 @@ public class SettingsActivity extends AppCompatActivity {
         boolean joystick = checkedId == R.id.modeJoystickButton;
         if (joystick) {
             if (!Settings.canDrawOverlays(this)) {
-                pendingJoystickMode = true;
                 updateModeUi();
-                showOverlayPermissionDialog();
+                showOverlayPermissionDialog(joystickPermission);
                 return;
             }
             // The service force-shows the joystick overlay in joystick mode,
@@ -286,11 +305,10 @@ public class SettingsActivity extends AppCompatActivity {
         }
         if (enabled) {
             if (!Settings.canDrawOverlays(this)) {
-                pendingFloatingEnable = true;
                 initializingFloating = true;
                 floatingSwitch.setChecked(false);
                 initializingFloating = false;
-                showOverlayPermissionDialog();
+                showOverlayPermissionDialog(floatingPermission);
                 return;
             }
             prefs.edit().putBoolean(Prefs.FLOATING_ENABLED, true).apply();
@@ -308,53 +326,21 @@ public class SettingsActivity extends AppCompatActivity {
         updateFloatingUi();
     }
 
-    private void showOverlayPermissionDialog() {
+    private void showOverlayPermissionDialog(ActivityResultLauncher<Intent> launcher) {
         new MaterialAlertDialogBuilder(this)
                 .setTitle(R.string.dialog_overlay_title)
                 .setMessage(R.string.dialog_overlay_message)
                 .setPositiveButton(R.string.dialog_overlay_settings, (dialog, which) -> {
                     try {
-                        startActivity(new Intent(
+                        launcher.launch(new Intent(
                                 Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
                                 Uri.parse("package:" + getPackageName())));
                     } catch (Exception e) {
                         toast(R.string.settings_overlay_denied);
                     }
                 })
-                .setNegativeButton(R.string.dialog_cancel, (dialog, which) -> {
-                    pendingFloatingEnable = false;
-                    pendingJoystickMode = false;
-                    updateModeUi();
-                    updateFloatingUi();
-                })
+                .setNegativeButton(R.string.dialog_cancel, null)
                 .show();
-    }
-
-    private void handlePendingPermissions() {
-        if (!pendingFloatingEnable && !pendingJoystickMode) {
-            return;
-        }
-        boolean granted = Settings.canDrawOverlays(this);
-        if (granted) {
-            if (pendingJoystickMode) {
-                prefs.edit()
-                        .putString(Prefs.SIMULATION_MODE, Prefs.MODE_JOYSTICK)
-                        .apply();
-                toast(R.string.settings_mode_switched_joystick);
-            } else {
-                prefs.edit().putBoolean(Prefs.FLOATING_ENABLED, true).apply();
-                if (isSimulationActive() && service != null) {
-                    service.showFloatingWindow();
-                }
-                toast(R.string.settings_floating_on);
-            }
-        } else {
-            toast(R.string.settings_overlay_denied);
-        }
-        pendingFloatingEnable = false;
-        pendingJoystickMode = false;
-        updateModeUi();
-        updateFloatingUi();
     }
 
     // ---------------------------------------------------------------------
@@ -391,10 +377,10 @@ public class SettingsActivity extends AppCompatActivity {
         LayerPickerDialog.show(this, id, url, coord,
                 (layerId, customUrl, customCoord) -> {
                     SharedPreferences.Editor editor = prefs.edit()
-                            .putString(Prefs.LAYER_ID, layerId)
-                            .putString(Prefs.CUSTOM_COORD, customCoord.name());
+                            .putString(Prefs.LAYER_ID, layerId);
                     if (customUrl != null) {
-                        editor.putString(Prefs.CUSTOM_URL, customUrl);
+                        editor.putString(Prefs.CUSTOM_URL, customUrl)
+                                .putString(Prefs.CUSTOM_COORD, customCoord.name());
                     }
                     editor.apply();
                     updateLayerSummary();

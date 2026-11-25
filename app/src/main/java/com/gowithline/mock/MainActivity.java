@@ -483,7 +483,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void restoreUiSettings() {
         float speed = prefs.getFloat(Prefs.SPEED_KMH, 5.0f);
-        setSpeedKmh(speed);
+        displaySpeedKmh(speed);
         boolean loop = prefs.getBoolean(Prefs.LOOP, false);
         checkLoop.setChecked(loop);
         follow = prefs.getBoolean(Prefs.FOLLOW, false);
@@ -722,6 +722,9 @@ public class MainActivity extends AppCompatActivity {
             toast(R.string.settings_mode_locked);
             return;
         }
+        if (desired && drawMode) {
+            setDrawMode(false);
+        }
         joystickMode = desired;
         applyModeUi();
     }
@@ -824,15 +827,19 @@ public class MainActivity extends AppCompatActivity {
     // ---------------------------------------------------------------------
 
     private void setSpeedKmh(double kmh) {
+        displaySpeedKmh(kmh);
+        prefs.edit().putFloat(Prefs.SPEED_KMH, (float) kmh).apply();
+        applyLiveSpeed(kmh);
+    }
+
+    private void displaySpeedKmh(double kmh) {
         settingSpeed = true;
         editSpeed.setText(String.format(Locale.US, "%.1f", kmh));
         editSpeed.setSelection(editSpeed.getText() == null ? 0 : editSpeed.getText().length());
         settingSpeed = false;
         speedLayout.setError(null);
-        prefs.edit().putFloat(Prefs.SPEED_KMH, (float) kmh).apply();
         updateRouteInfo();
         updateButtons();
-        applyLiveSpeed(kmh);
     }
 
     private void onSpeedTextChanged() {
@@ -1132,14 +1139,15 @@ public class MainActivity extends AppCompatActivity {
             double kmh = snapshot.speedMps * 3.6;
             double current = parseSpeedKmh();
             if (current <= 0 || Math.abs(current - kmh) > 0.11) {
-                setSpeedKmh(kmh);
+                displaySpeedKmh(kmh);
             }
         }
 
         if (snapshot.isActive() && snapshot.hasPosition()) {
             GeoPoint position = toMapGeoPoint(new PointD(snapshot.lat, snapshot.lng));
             currentMarker.setPosition(position);
-            currentMarker.setRotation((float) snapshot.bearingDegrees);
+            // osmdroid negates flat marker rotations when drawing on the canvas.
+            currentMarker.setRotation((float) -snapshot.bearingDegrees);
             currentMarker.setVisible(true);
             if (follow && snapshot.state == SimulationSnapshot.STATE_RUNNING) {
                 mapView.getController().setCenter(position);
